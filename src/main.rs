@@ -48,11 +48,11 @@ fn main() {
     let r3_resp = r3_rand + c * r3;
     let s_resp = s_rand + c * s_prime;
     let mh_resp = mh_rand + c * mh;
-    let m_adv = mh_resp * c.invert().unwrap();
 
+    // check usual proof
     let c1_v = ((G1Projective::from(a_bar) - d) * c + a_prime * e_resp + h0 * r2_resp).to_affine();
     let c2_v =
-        ((G1Projective::generator() + h1 * m + h2 * m_adv) * c + d * (-r3_resp) + h0 * s_resp)
+        ((G1Projective::generator() + h1 * m) * c + d * (-r3_resp) + h0 * s_resp + h2 * mh_resp)
             .to_affine();
 
     assert_eq!(c1, c1_v);
@@ -61,5 +61,15 @@ fn main() {
         pairing(&a_bar, &G2Affine::generator()),
         pairing(&a_prime, &w)
     );
+
+    // check with extra revealed message
+    let m_adv = mh_resp * c.invert().unwrap();
+    let c1_v2 = ((G1Projective::from(a_bar) - d) * c + a_prime * e_resp + h0 * r2_resp).to_affine();
+    let c2_v2 =
+        ((G1Projective::generator() + h1 * m + h2 * m_adv) * c + d * (-r3_resp) + h0 * s_resp)
+            .to_affine();
+
+    assert_eq!(c1, c1_v2);
+    assert_eq!(c2, c2_v2);
     println!("done");
 }
