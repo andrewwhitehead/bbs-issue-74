@@ -64,12 +64,9 @@ fn main() {
 
     // check with extra revealed message
     let m_adv = mh_resp * c.invert().unwrap();
-    let c1_v2 = ((G1Projective::from(a_bar) - d) * c + a_prime * e_resp + h0 * r2_resp).to_affine();
     let c2_v2 =
         ((G1Projective::generator() + h1 * m + h2 * m_adv) * c + d * (-r3_resp) + h0 * s_resp)
             .to_affine();
-
-    assert_eq!(c1, c1_v2);
     assert_eq!(c2, c2_v2);
     println!("done");
 }
